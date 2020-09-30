@@ -2,7 +2,6 @@ import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 
 import { Utils } from "./utils";
-import {output} from "@pulumi/pulumi";
 
 const config = new pulumi.Config("amazon-certificate-manager");
 const domain = config.require("domain");
@@ -19,7 +18,9 @@ const certificate = new aws.acm.Certificate("certificate", {
     domainName: domain,
     validationMethod: "DNS",
     subjectAlternativeNames: [
-        domainParts.parentDomain,
+        // Subject Alternative Names (SANs) cannot end with a period
+        domainParts.parentDomain.slice(0, -1),
+        `api.${domainParts.parentDomain}`.slice(0, -1)
     ],
 }, { provider: usEast1Region });
 
@@ -48,6 +49,14 @@ const certificateValidationSAN = new aws.route53.Record(`${domain}-validation-SA
     ttl: ttl,
 });
 
+const certificateValidationApiSAN = new aws.route53.Record(`api.${domainParts.parentDomain}-validation-SAN`,{
+    name: certificate.domainValidationOptions[2].resourceRecordName,
+    zoneId: hostedZoneId,
+    type: certificate.domainValidationOptions[2].resourceRecordType,
+    records: [certificate.domainValidationOptions[2].resourceRecordValue],
+    ttl
+})
+
 /**
  * This is a _special_ resource that waits for ACM to complete validation via the DNS record
  * checking for a status of "ISSUED" on the certificate itself. No actual resources are
@@ -58,10 +67,11 @@ const certificateValidationSAN = new aws.route53.Record(`${domain}-validation-SA
  * for the actual implementation.
  */
 
-const certificateValidation = new aws.acm.CertificateValidation("certificateValidation", {
+new aws.acm.CertificateValidation("certificateValidation", {
     certificateArn: certificate.arn,
     validationRecordFqdns: [
         certificateValidationDomain.fqdn,
-        certificateValidationSAN.fqdn
+        certificateValidationSAN.fqdn,
+        certificateValidationApiSAN.fqdn
     ],
 }, { provider: usEast1Region });
