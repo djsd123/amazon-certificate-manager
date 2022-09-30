@@ -1,17 +1,15 @@
 {
     "name": "amazon-certificate-manager",
     "devDependencies": {
-        "@types/node": "^8.0.0"
+        "@types/node": "^14.0.0"
     },
     "dependencies": {
-        "@pulumi/aws": "^1.0.0",
-        "@pulumi/awsx": "^0.18.10",
-        "@pulumi/pulumi": "^1.0.0",
-        "grpc": "^1.24.3"
+        "@pulumi/aws": "^5.0.0",
+        "@pulumi/awsx": "^0.40.0",
+        "@pulumi/pulumi": "^3.0.0"
     },
     "version": "0.1.0",
     "description": "Host a static website on s3",
-    "main": "index.js",
     "repository": "git@github.com:djsd123/s3-static-website.git",
     "author": "Mikael Allison <mikellallison@gmail.com>",
     "license": "MIT"

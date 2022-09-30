@@ -1,4 +1,6 @@
+encryptionsalt: v1:YzyyoCrBBQ4=:v1:XnLmpjXOVYIoq0D0:v10KupHlO8bVjULSd+GAMaD/vyo8mQ==
 config:
-  aws:region: eu-west-1
-  aws:profile: personal
   amazon-certificate-manager:domain: www.sub.mcallison.co.uk
+  amazon-certificate-manager:cloudFront: false
+  aws:profile: personal
+  aws:region: eu-west-1

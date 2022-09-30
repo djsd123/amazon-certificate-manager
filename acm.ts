@@ -5,10 +5,13 @@ import { Utils } from "./utils";
 
 const config = new pulumi.Config("amazon-certificate-manager");
 const domain = config.require("domain");
+const cloudFront = config.requireBoolean('cloudFront')
+const ireland = aws.Region.EUWest1
+const nVirginia = aws.Region.USEast1
 
-const usEast1Region = new aws.Provider("usEast", {
+const provider = new aws.Provider("provider", {
     profile: aws.config.profile,
-    region: "us-east-1",
+    region: cloudFront ? nVirginia : ireland,
 });
 
 const ttl = 60 * 10; // Ten minutes
@@ -20,9 +23,9 @@ const certificate = new aws.acm.Certificate("certificate", {
     subjectAlternativeNames: [
         // Subject Alternative Names (SANs) cannot end with a period
         domainParts.parentDomain.slice(0, -1),
-        `api.${domainParts.parentDomain}`.slice(0, -1)
+        `*.${domainParts.parentDomain}`.slice(0, -1)
     ],
-}, { provider: usEast1Region });
+}, { provider: provider });
 
 const hostedZoneId = aws.route53.getZone({
     name: domainParts.parentDomain,
@@ -74,4 +77,4 @@ new aws.acm.CertificateValidation("certificateValidation", {
         certificateValidationSAN.fqdn,
         certificateValidationApiSAN.fqdn
     ],
-}, { provider: usEast1Region });
+}, { provider: provider });

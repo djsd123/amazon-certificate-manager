@@ -1,5 +1,5 @@
 name: amazon-certificate-manager
-description: Create a TLS certifcate with ACM
+description: Create a TLS certificate with ACM
 runtime: nodejs
 template:
   description: A minimal AWS TypeScript Pulumi program

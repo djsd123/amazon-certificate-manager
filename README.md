@@ -17,13 +17,18 @@ See: [Terraform docs](https://www.terraform.io/docs/providers/aws/r/cloudfront_d
 
 #### Usage
 
+**note**
+
+If `amazon-certificate-manager:cloudFront` is set to true then ACM cert is created in the `us-east-1` region.  Otherwise
+Ireland (`eu-west-1`)
+
 First create yourself a stack file named `Pulumi<CHOOSE STACK NAME>.yaml` with the following contents
 ```yaml
 config:
   aws:region: eu-west-1
   aws:profile: <YOUR PROFILE NAME>
   amazon-certificate-manager:domain: <YOUR SUBDOMAIN>
-
+  amazon-certificate-manager:cloudFront: true
 ```
 
 ```bash
